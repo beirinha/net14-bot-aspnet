@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using SimpleBot.Logic;
 
 namespace SimpleBot
@@ -29,6 +31,12 @@ namespace SimpleBot
             if ( activity != null && activity.Type == ActivityTypes.Message)
             {
                 await HandleActivityAsync(activity);
+
+                var client = new MongoClient();
+                var db = client.GetDatabase("botfiap");
+                var collection = db.GetCollection<Entity>("bot");
+
+                collection.InsertOne(new Entity(activity.Text));
             }
 
             // HTTP 202

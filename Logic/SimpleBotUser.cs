@@ -9,6 +9,7 @@ namespace SimpleBot.Logic
     {
         public string Reply(SimpleMessage message)
         {
+            var usrId = message.Id;
             return $"{message.User} disse '{message.Text}";
         }
 

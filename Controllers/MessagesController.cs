@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -33,10 +35,24 @@ namespace SimpleBot
                 await HandleActivityAsync(activity);
 
                 var client = new MongoClient();
-                var db = client.GetDatabase("botfiap");
-                var collection = db.GetCollection<Entity>("bot");
+                var db = client.GetDatabase("botnosql");
+                var collection = db.GetCollection<Activity>("bot");
 
-                collection.InsertOne(new Entity(activity.Text));
+                var documentos = new Activity();
+                documentos.Id = (new Random().Next(0,10000) + 1).ToString();
+                documentos.Text = activity.Text;
+
+                collection.InsertOne(documentos);
+
+                var filtro = Builders<Activity>.Filter.Eq("_id", documentos.Id);
+
+                var res = collection.Find(filtro).ToList();
+
+                documentos.Text = documentos.Text + "Alterado";
+
+                collection.ReplaceOne(filtro, documentos);
+
+                collection.DeleteOne(filtro);
             }
 
             // HTTP 202

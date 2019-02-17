@@ -33,7 +33,7 @@ namespace SimpleBot
                 await HandleActivityAsync(activity);
 
                 var client = new MongoClient();
-                var db = client.GetDatabase("botfiap");
+                var db = client.GetDatabase("botnosql");
                 var collection = db.GetCollection<Entity>("bot");
 
                 collection.InsertOne(new Entity(activity.Text));
